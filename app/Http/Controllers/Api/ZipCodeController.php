@@ -10,7 +10,6 @@ class ZipCodeController extends Controller
 {
     public function searchZipCode($zipCode)
     {
-        return "hola";
         //Convert txt file to array 
         $array = $this->convertTxtFile();
         //Filter array with zip code parameter
