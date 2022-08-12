@@ -10,6 +10,7 @@ class ZipCodeController extends Controller
 {
     public function searchZipCode($zipCode)
     {
+        return "hola";
         //Convert txt file to array 
         $array = $this->convertTxtFile();
         //Filter array with zip code parameter
@@ -46,7 +47,7 @@ class ZipCodeController extends Controller
                 'zip_code' => $a[0],
                 'locality' => !empty($a[3]) ? $this->removeSpecialCharacters($a[3]) : '',
                 'federal_entity' => [
-                    'key' => $a[7],
+                    'key' => ltrim($a[7],"0"),
                     'name' => $this->removeSpecialCharacters($a[4]),
                     'code' => !empty($a[9]) ? $a[9] : null,
                 ],
