@@ -8,18 +8,18 @@ use App\Models\Zip_code;
 
 class ZipCodeController extends Controller
 {
-    public function searchZipCode($zipCode)
+    public function searchZipCode($zip_code)
     {
         //Convert txt file to array 
         $array = $this->convertTxtFile();
         //Filter array with zip code parameter
-        $filter_data = $this->filterArray($array, $zipCode);
+        $filter_data = $this->filterArray($array, $zip_code);
         //Format to respose
         $fomart_response = $this->applyFormat($filter_data);
         //Return response
         return  $fomart_response;
     }
-    private function convertTxtFile()
+    public function convertTxtFile()
     {
         $lines = file('CPdescarga.txt', FILE_IGNORE_NEW_LINES);
         $filecont = str_replace("|", ",", $lines);
@@ -30,24 +30,24 @@ class ZipCodeController extends Controller
         }
         return $array;
     }
-    private function filterArray($array, $zipCode)
+    public function filterArray($array, $zip_code)
     {
-        $filter_data = array_filter($array, function ($ar) use ($zipCode) {
-            if ($ar[0] == $zipCode) {
+        $filter_data = array_filter($array, function ($ar) use ($zip_code) {
+            if ($ar[0] == $zip_code) {
                 return $ar;
             }
         });
         return  $filter_data;
     }
-    private function applyFormat($array)
+    public function applyFormat($array)
     {
         foreach ($array as $key => $a) {
             $new_array = [
                 'zip_code' => $a[0],
-                'locality' => !empty($a[3]) ? $this->removeSpecialCharacters($a[3]) : '',
+                'locality' => !empty($a[5]) ? strtoupper($this->removeSpecialCharacters($a[5])) : '',
                 'federal_entity' => [
                     'key' => ltrim($a[7],"0"),
-                    'name' => $this->removeSpecialCharacters($a[4]),
+                    'name' => strtoupper($this->removeSpecialCharacters($a[4])),
                     'code' => !empty($a[9]) ? $a[9] : null,
                 ],
                 'settlements' => [
