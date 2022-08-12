@@ -1,32 +1,15 @@
-FROM webdevops/php-nginx:7.4-alpine
-
-# Install Laravel framework system requirements (https://laravel.com/docs/8.x/deployment#optimizing-configuration-loading)
-RUN apk add oniguruma-dev postgresql-dev libxml2-dev
-RUN docker-php-ext-install \
-        bcmath \
-        ctype \
-        fileinfo \
-        json \
-        mbstring \
-        pdo_mysql \
-        pdo_pgsql \
-        tokenizer \
-        xml
-
-# Copy Composer binary from the Composer official Docker image
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-ENV WEB_DOCUMENT_ROOT /app/public
-ENV APP_ENV production
+FROM composer:2.1.10 as build
 WORKDIR /app
-COPY . .
+COPY . /app
+RUN composer install && composer dumpautoload
 
-RUN composer install --no-interaction --optimize-autoloader --no-dev
-# Optimizing Configuration loading
-RUN php artisan config:cache
-# Optimizing Route loading
-RUN php artisan route:cache
-# Optimizing View loading
-RUN php artisan view:cache
+FROM php:8.1.0RC5-apache-buster
+RUN docker-php-ext-install pdo pdo_mysql
 
-RUN chown -R application:application .
+EXPOSE 8080
+COPY --from=build /app /var/www/
+COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+RUN chmod 777 -R /var/www/storage/ && \
+  echo "Listen 8080">>/etc/apache2/ports.conf && \
+  chown -R www-data:www-data /var/www/ && \
+  a2enmod rewrite
