@@ -9,7 +9,7 @@ use App\Models\Zip_code;
 class ZipCodeController extends Controller
 {
     public function searchZipCode($zip_code)
-    {
+    {       
         //Convert txt file to array 
         $array = $this->convertTxtFile();
         //Filter array with zip code parameter
