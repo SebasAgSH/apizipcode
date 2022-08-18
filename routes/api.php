@@ -3,4 +3,4 @@
 // use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/zip-codes/{zipcode}','Api\ZipCodeController@searchZipCode');
+Route::get('zip-codes/{zipcode}','Api\ZipCodeController@searchZipCode');
